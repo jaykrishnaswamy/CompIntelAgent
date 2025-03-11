@@ -4,8 +4,14 @@ import json
 import openai
 import os
 
-# Load API Key from GitHub Secrets
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Check if OPENAI_API_KEY is accessible
+api_key = os.getenv("OPENAI_API_KEY")
+
+if not api_key:
+    print("⚠ ERROR: OPENAI_API_KEY is missing! Make sure it's added as a GitHub Secret.")
+else:
+    print("✅ OPENAI_API_KEY is available and loaded successfully.")
+
 
 # Competitor Blog URL (Change this to your competitor's blog)
 COMPETITOR_BLOG_URL = "https://www.workday.com/blog"
