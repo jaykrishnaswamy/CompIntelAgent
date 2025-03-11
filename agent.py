@@ -13,21 +13,25 @@ COMPETITOR_BLOG_URL = "https://www.workday.com/blog"
 # Storage file to track seen blog posts
 STORAGE_FILE = "seen_blogs.json"
 
-# Step 1: Scrape the Blog Page
 def scrape_blog(url):
     response = requests.get(url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, "html.parser")
-        articles = soup.find_all("article")  # Change this if blog structure is different
+        articles = soup.find_all("article")  # Change this if needed
 
         blog_posts = []
         for article in articles:
-            title = article.find("h2").get_text(strip=True) if article.find("h2") else "No Title"
-            link = article.find("a")["href"] if article.find("a") else "No Link"
+            title_tag = article.find("h2") or article.find("h3")  # Check both <h2> and <h3>
+            title = title_tag.get_text(strip=True) if title_tag else "Untitled Post"
+
+            link_tag = article.find("a")
+            link = link_tag["href"] if link_tag and "href" in link_tag.attrs else "No Link"
+
             blog_posts.append({"title": title, "link": link})
 
         return blog_posts
     return []
+
 
 # Step 2: Detect New Blog Posts
 def detect_new_posts(blog_posts):
@@ -45,10 +49,34 @@ def detect_new_posts(blog_posts):
 
     return new_posts
 
-# Step 3: Summarize Using GPT-4 (Updated API)
 def summarize_posts(posts):
     if not posts:
-        return
+        return "No new blog updates detected."
+
+    openai.api_key = OPENAI_API_KEY
+    summaries = []
+
+    for post in posts:
+        try:
+            prompt = f"Summarize this competitor blog post:\nTitle: {post['title']}\nLink: {post['link']}"
+
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": "You are an AI summarizing competitor blog posts."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7
+            )
+
+            summary = response.choices[0].message["content"]
+            summaries.append(f"🔹 **{post['title']}**\n{summary}\n🔗 {post['link']}\n")
+
+        except Exception as e:
+            summaries.append(f"🔹 **{post['title']}**\n⚠ Failed to summarize: {str(e)}\n🔗 {post['link']}\n")
+
+    return "\n".join(summaries)
+
 
 
 # Step 4: Run the Agent
