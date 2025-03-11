@@ -49,3 +49,22 @@ def detect_new_posts(blog_posts):
 def summarize_posts(posts):
     if not posts:
         return
+
+
+# Step 4: Run the Agent
+if __name__ == "__main__":
+    blog_posts = scrape_blog(COMPETITOR_BLOG_URL)
+    new_posts = detect_new_posts(blog_posts)
+    summary = summarize_posts(new_posts)
+
+    log_message = f"\n### Competitive Intelligence Update ###\n{summary}\n"
+
+    # Force output to GitHub Actions logs
+    print("=" * 50)
+    print(log_message)
+    print("=" * 50)
+
+    # Save output to a log file
+    with open("latest_report.txt", "w", encoding="utf-8") as log_file:
+        log_file.write(log_message)
+
