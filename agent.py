@@ -53,8 +53,16 @@ def summarize_posts(posts):
 
 # Step 4: Run the Agent
 if __name__ == "__main__":
+    print("\n🔍 Running Competitive Intelligence Agent...\n")
+
     blog_posts = scrape_blog(COMPETITOR_BLOG_URL)
+    print("\n📢 RAW SCRAPED BLOG POSTS:")
+    print(blog_posts)  # Debugging: Print raw extracted data
+
     new_posts = detect_new_posts(blog_posts)
+    print("\n🆕 DETECTED NEW POSTS:")
+    print(new_posts)  # Debugging: Print only new posts
+
     summary = summarize_posts(new_posts)
 
     log_message = f"\n### Competitive Intelligence Update ###\n{summary}\n"
@@ -67,4 +75,6 @@ if __name__ == "__main__":
     # Save output to a log file
     with open("latest_report.txt", "w", encoding="utf-8") as log_file:
         log_file.write(log_message)
+
+    print("\n✅ Execution Complete. Check 'latest_report.txt' for results.\n")
 
