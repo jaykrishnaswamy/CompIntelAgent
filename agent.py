@@ -49,6 +49,8 @@ def detect_new_posts(blog_posts):
 
     return new_posts
 
+import openai
+
 def summarize_posts(posts):
     if not posts:
         return "No new blog updates detected."
@@ -69,7 +71,8 @@ def summarize_posts(posts):
                 temperature=0.7
             )
 
-            summary = response.choices[0].message["content"]
+            # Fix API response parsing for OpenAI v1.0+
+            summary = response["choices"][0]["message"]["content"]
             summaries.append(f"🔹 **{post['title']}**\n{summary}\n🔗 {post['link']}\n")
 
         except Exception as e:
