@@ -45,33 +45,7 @@ def detect_new_posts(blog_posts):
 
     return new_posts
 
-# Step 3: Summarize Using GPT-4
+# Step 3: Summarize Using GPT-4 (Updated API)
 def summarize_posts(posts):
     if not posts:
-        return "No new blog updates detected."
-
-    openai.api_key = OPENAI_API_KEY
-    summaries = []
-
-    for post in posts:
-        prompt = f"Summarize this competitor blog post:\nTitle: {post['title']}\nLink: {post['link']}"
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are an AI summarizing competitive intelligence blog posts."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        summary = response["choices"][0]["message"]["content"]
-        summaries.append(f"🔹 **{post['title']}**\n{summary}\n🔗 {post['link']}\n")
-
-    return "\n".join(summaries)
-
-# Step 4: Run the Agent
-if __name__ == "__main__":
-    blog_posts = scrape_blog(COMPETITOR_BLOG_URL)
-    new_posts = detect_new_posts(blog_posts)
-    summary = summarize_posts(new_posts)
-
-    print("### Competitive Intelligence Update ###")
-    print(summary)  # This will be logged in GitHub Actions
+        return
